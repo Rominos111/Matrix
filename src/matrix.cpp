@@ -1,15 +1,17 @@
 #include "../headers/matrix.h"
 
-/**
- * Constructeur privé
- *
- * @param nbRows Nombre de lignes
- * @param nbCols Nombre de colonnes
- */
 template<typename TYPE_ELEM>
-Matrix<TYPE_ELEM>::Matrix(const size_t nbRows, const size_t nbCols) {
-    this->nbCols = nbCols;
+Matrix<TYPE_ELEM>::Matrix(const int nbRows, const int nbCols) {
     this->nbRows = nbRows;
+    this->nbCols = nbCols;
+
+    if (nbRows <= 0) {
+        throw std::range_error("Number of rows negative or null");
+    }
+
+    if (nbCols <= 0) {
+        throw std::range_error("Number of columns negative or null");
+    }
 
     content = (TYPE_ELEM **) std::malloc(nbRows * sizeof(TYPE_ELEM*));
     // Exemple : [*ptr0, *ptr1, *ptr2...]
@@ -20,48 +22,51 @@ Matrix<TYPE_ELEM>::Matrix(const size_t nbRows, const size_t nbCols) {
     }
 }
 
-/**
- * Construit une matrice de zéros
- * @param nbRows
- * @param nbCols
- * @return
- */
 template<typename TYPE_ELEM>
-void Matrix<TYPE_ELEM>::zeros() {
+Matrix<TYPE_ELEM>::~Matrix() {
     for (int row=0; row<nbRows; row++) {
-        for (int col=0; col<nbRows; col++) {
-            content[row][col] = 0;
-        }
+        delete[] content[row];
     }
+
+    delete[] content;
 }
 
-/**
- * Setter
- *
- * @param row Ligne
- * @param col Colonne
- * @param value Valeur
- */
 template<typename TYPE_ELEM>
-void Matrix<TYPE_ELEM>::set(int row, int col, TYPE_ELEM value) {
+Matrix<TYPE_ELEM> Matrix<TYPE_ELEM>::zeros(int nbRows, int nbCols) {
+    Matrix<TYPE_ELEM> m(nbRows, nbCols);
+
+    for (int row=0; row<nbRows; row++) {
+        for (int col=0; col<nbRows; col++) {
+            m.content[row][col] = 0;
+        }
+    }
+
+    return m;
+}
+
+template<typename TYPE_ELEM>
+Matrix<TYPE_ELEM> Matrix<TYPE_ELEM>::identity(const int size) {
+    Matrix<TYPE_ELEM> m = Matrix<TYPE_ELEM>::zeros(size, size);
+
+    for (int row=0; row<size; row++) {
+        m.content[row][row] = 1;
+    }
+
+    return m;
+}
+
+template<class TYPE_ELEM>
+TYPE_ELEM& Matrix<TYPE_ELEM>::set(const int row, const int col, const TYPE_ELEM value) {
     if (row >= 0 && row < nbRows && col >= 0 && col < nbCols) {
-        content[row][col] = value;
+        return content[row][col] = value;
     }
     else {
         throw std::out_of_range("Index out of range");
     }
 }
 
-/**
- * Getter
- *
- * @param row Ligne
- * @param col Colonne
- *
- * @return Matrix[row, col]
- */
-template<typename TYPE_ELEM>
-TYPE_ELEM Matrix<TYPE_ELEM>::get(int row, int col) const {
+template<class TYPE_ELEM>
+TYPE_ELEM Matrix<TYPE_ELEM>::get(const int row, const int col) const {
     if (row >= 0 && row < nbRows && col >= 0 && col < nbCols) {
         return content[row][col];
     }
@@ -70,10 +75,7 @@ TYPE_ELEM Matrix<TYPE_ELEM>::get(int row, int col) const {
     }
 }
 
-/**
- * Affiche la matrice
- */
-template<typename TYPE_ELEM>
+template<class TYPE_ELEM>
 void Matrix<TYPE_ELEM>::display() const {
     for (int row=0; row<nbRows; row++) {
         for (int col=0; col<nbCols; col++) {
@@ -85,12 +87,34 @@ void Matrix<TYPE_ELEM>::display() const {
 }
 
 template<typename TYPE_ELEM>
-Matrix<TYPE_ELEM>::~Matrix() {
+bool Matrix<TYPE_ELEM>::isSquare() const {
+    return (nbRows == nbCols);
+}
+
+template<typename TYPE_ELEM>
+Matrix<TYPE_ELEM> Matrix<TYPE_ELEM>::copy() const {
+    Matrix<TYPE_ELEM> other(nbRows, nbCols);
+
     for (int row=0; row<nbRows; row++) {
-        std::free(content[row]);
+        for (int col=0; col<nbCols; col++) {
+            other.content[row][col] = content[row][col];
+        }
     }
 
-    std::free(content);
-
-    std::free(this);
+    return other;
 }
+
+template<typename TYPE_ELEM>
+Matrix<TYPE_ELEM> Matrix<TYPE_ELEM>::add(const Matrix<TYPE_ELEM> other) {
+    for (int row=0; row<nbRows; row++) {
+        for (int col=0; col<nbCols; col++) {
+            content[row][col] += other.content[row][col];
+        }
+    }
+
+    return *this;
+}
+
+// Initialisation de templates pour pouvoir utiliser ce .cpp
+
+template class Matrix<int>;
