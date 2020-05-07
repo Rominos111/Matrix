@@ -66,7 +66,9 @@ public:
 
     Matrix<TYPE_ELEM> copy() const;
 
-    Matrix<TYPE_ELEM> add(const Matrix<TYPE_ELEM> other);
+    void add(const Matrix<TYPE_ELEM> *other);
+
+    static Matrix<TYPE_ELEM> add(const Matrix<TYPE_ELEM> *m1, const Matrix<TYPE_ELEM> *m2);
 
     /**
      * Gestion des accès pour la surcharge de l'opérateur <code>()</code>

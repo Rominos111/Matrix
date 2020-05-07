@@ -105,16 +105,30 @@ Matrix<TYPE_ELEM> Matrix<TYPE_ELEM>::copy() const {
 }
 
 template<typename TYPE_ELEM>
-Matrix<TYPE_ELEM> Matrix<TYPE_ELEM>::add(const Matrix<TYPE_ELEM> other) {
+void Matrix<TYPE_ELEM>::add(const Matrix<TYPE_ELEM> *other) {
     for (int row=0; row<nbRows; row++) {
         for (int col=0; col<nbCols; col++) {
-            content[row][col] += other.content[row][col];
+            set(row, col, get(row, col) + other->get(row, col));
+        }
+    }
+}
+
+template<typename TYPE_ELEM>
+Matrix<TYPE_ELEM> Matrix<TYPE_ELEM>::add(const Matrix<TYPE_ELEM> *m1, const Matrix<TYPE_ELEM> *m2) {
+    if (m1->nbRows != m2->nbRows || m1->nbCols != m2->nbCols) {
+        throw std::range_error("Pas les mêmes dimensions");
+    }
+
+    Matrix<TYPE_ELEM> m = Matrix<TYPE_ELEM>(m1->nbRows, m1->nbCols);
+
+    for (int i=0; i<m1->nbRows; i++) {
+        for (int j=0; j<m1->nbCols; j++) {
+            m.set(i, j, m1->get(i, j) + m2->get(i, j));
         }
     }
 
-    return *this;
+    return m;
 }
 
-// Initialisation de templates pour pouvoir utiliser ce .cpp
-
+// Initialisation des templates pour pouvoir utiliser ce .cpp
 template class Matrix<int>;
