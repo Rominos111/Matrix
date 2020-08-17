@@ -1,4 +1,4 @@
-#include "../headers/matrix.h"
+#include "matrix.h"
 
 template<typename TYPE_ELEM>
 Matrix<TYPE_ELEM>::Matrix(const int nbRows, const int nbCols) {
