@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Created by Romain on 02/05/2020.
+
 #include "matrix.h"
 
 template<typename TYPE_ELEM>

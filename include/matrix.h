@@ -1,3 +1,9 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+/**
+ * Matrix
+ */
+// Created by Romain on 02/05/2020.
+
 #ifndef MATRIX_H
 #define MATRIX_H
 
@@ -167,4 +173,4 @@ private:
     TYPE_ELEM **content;
 };
 
-#endif
+#endif //MATRIX_H
